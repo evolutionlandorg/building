@@ -6,16 +6,13 @@ import "@evolutionland/common/contracts/interfaces/ISettingsRegistry.sol";
 import "@evolutionland/common/contracts/interfaces/IObjectOwnership.sol";
 import "@evolutionland/common/contracts/PausableDSAuth.sol";
 import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLookup.sol";
+import "./BuildingSettingIds.sol";
 
 contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
         address indexed owner, uint256 streetBlockTokenId, uint256 _landTokenId, uint256 createTime
     );
-
-    mapping(uint256 => uint256[])   public landsInStreetBlock;
-
-    mapping(uint256 => uint256)     public land2StreetBlock;
 
     /*
      *  Modifiers
@@ -34,7 +31,9 @@ contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
 
     ISettingsRegistry public registry;
 
-    mapping(uint256 => StreetBlock) public tokenId2StreetBlock;
+    mapping(uint256 => uint256[])   public landsInStreetBlock;
+
+    mapping(uint256 => uint256)     public land2StreetBlock;
 
     function initializeContract(address _registry) public singletonLockCall {
         // Ownable constructor
@@ -71,6 +70,7 @@ contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
 
         lastStreetBlockObjectId += 1;
         require(lastStreetBlockObjectId <= 340282366920938463463374607431768211455, "Can not be stored with 128 bits.");
+
         uint256 tokenId = IObjectOwnership(registry.addressOf(CONTRACT_OBJECT_OWNERSHIP)).mintObject(_owner, uint128(lastStreetBlockObjectId));
 
         // landsInStreetBlock[tokenId] = uint256[]();

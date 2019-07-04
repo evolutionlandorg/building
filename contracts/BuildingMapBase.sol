@@ -6,15 +6,16 @@ import "@evolutionland/common/contracts/interfaces/ISettingsRegistry.sol";
 import "@evolutionland/common/contracts/interfaces/IObjectOwnership.sol";
 import "@evolutionland/common/contracts/PausableDSAuth.sol";
 import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLookup.sol";
+import "./BuildingSettingIds.sol";
 
 contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
-        address indexed owner, uint256 buildingMapTokenId, uint256 type, uint256 level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, uint256 createTime
+        address indexed owner, uint256 buildingMapTokenId, uint256 buildingType, uint256 level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, uint256 createTime
     );
 
     struct BuildingMap {
-        uint256 type;
+        uint256 buildingType;
         uint256 level;
 
         uint256 gold;
@@ -43,6 +44,8 @@ contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
 
     mapping(uint256 => BuildingMap) public tokenId2BuildingMap;
 
+    mapping(uint256 => mapping(uint256 => uint256)) public type2level2MapId;
+
     mapping(uint256 => address) public tokenId2Approved;
 
     function initializeContract(address _registry) public singletonLockCall {
@@ -54,9 +57,9 @@ contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
     }
 
     function createBuildingMap(
-        uint256 _type, uint256 _level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, address _owner) public auth returns (uint256) {
+        uint256 _buildingType, uint256 _level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, address _owner) public auth returns (uint256) {
         BuildingMap memory buildingMap = BuildingMap({
-            type : _type,
+            buildingType : _buildingType,
             level : _level,
             gold : _gold,
             wood : _wood,
@@ -71,7 +74,9 @@ contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
 
         tokenId2BuildingMap[tokenId] = buildingMap;
 
-        emit Created(_owner, tokenId, _type, _level, _gold, _wood, _water, _fire, _sioo, now);
+        type2level2MapId[_buildingType][_level] = tokenId;
+
+        emit Created(_owner, tokenId, _buildingType, _level, _gold, _wood, _water, _fire, _sioo, now);
 
         return tokenId;
     }

@@ -6,6 +6,8 @@ import "@evolutionland/common/contracts/interfaces/ISettingsRegistry.sol";
 import "@evolutionland/common/contracts/interfaces/IObjectOwnership.sol";
 import "@evolutionland/common/contracts/PausableDSAuth.sol";
 import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLookup.sol";
+import "./BuildingSettingIds.sol";
+import "./BuildingSettingIds.sol";
 
 contract BuildingBase is PausableDSAuth, BuildingSettingIds {
 
@@ -47,8 +49,7 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
     }
 
     function createBuildingFromLand(uint256 _buildingMapId, uint256 _landTokenId)  public auth returns (uint256) {
-        // TODO: get from register
-        uint256 streetBlockId = StreetBlockBase.createStreetBlock(_landTokenId);
+        uint256 streetBlockId = IObjectOwnership(registry.addressOf(CONTRACT_STREET_BLOCK_BASE)).createStreetBlock(_landTokenId);
 
         uint256 tokenId = createBuilding(_buildingMapId, streetBlockId);
         return tokenId;
@@ -66,12 +67,14 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
         });
 
         lastBuildingObjectId += 1;
-        require(lastBuildingMapObjectId <= 340282366920938463463374607431768211455, "Can not be stored with 128 bits.");
-        uint256 tokenId = IObjectOwnership(registry.addressOf(CONTRACT_OBJECT_OWNERSHIP)).mintObject(_owner, uint128(lastBuildingObjectId));
+        require(lastBuildingObjectId <= 340282366920938463463374607431768211455, "Can not be stored with 128 bits.");
+
+        uint256 tokenId = IObjectOwnership(registry.addressOf(CONTRACT_OBJECT_OWNERSHIP))
+            .mintObject(address(this), uint128(lastBuildingObjectId));
 
         tokenId2Building[tokenId] = building;
 
-        emit Created(_owner, tokenId, _buildingMapId, _streetBlockId, now);
+        emit Created(address(this), tokenId, _buildingMapId, _streetBlockId, now);
 
         return tokenId;
     }
