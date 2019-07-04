@@ -47,7 +47,8 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
     }
 
     function createBuildingFromLand(uint256 _buildingMapId, uint256 _landTokenId)  public auth returns (uint256) {
-        uint256 streetBlockId = createBuildingBlock(_landTokenId);
+        // TODO: get from register
+        uint256 streetBlockId = StreetBlockBase.createStreetBlock(_landTokenId);
 
         uint256 tokenId = createBuilding(_buildingMapId, streetBlockId);
         return tokenId;
