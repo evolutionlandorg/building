@@ -10,7 +10,7 @@ import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLooku
 contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
-        address indexed owner, uint256 streetBlockTokenId, uint256 _x1, uint256 _y1, uint256 _x2, uint256 _y2, uint256 createTime
+        address indexed owner, uint256 streetBlockTokenId, uint256 _landTokenId, uint256 createTime
     );
 
     mapping(uint256 => uint256[])   public landsInStreetBlock;
@@ -44,8 +44,26 @@ contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
         registry = ISettingsRegistry(_registry);
     }
 
+    function createStreetBlockFromLand(
+            uint256 _landTokenId) public auth returns (uint256) {
+
+            // TODO: Iterate the locations and insert to the new create BlockStreet.
+            // TODO: Validate there is no conflict: each land can only appear in one Street Block.
+            // TODO: Other rule checks: continuous coordinate etc.
+
+            lastStreetBlockObjectId += 1;
+            require(lastStreetBlockObjectId <= 340282366920938463463374607431768211455, "Can not be stored with 128 bits.");
+            uint256 tokenId = IObjectOwnership(registry.addressOf(CONTRACT_OBJECT_OWNERSHIP)).mintObject(_owner, uint128(lastStreetBlockObjectId));
+
+            landsInStreetBlock[tokenId].push(_landTokenId);
+
+            emit Created(_owner, tokenId, _landTokenId, _width, now);
+
+            return tokenId;
+     }
+
     function createStreetBlock(
-        uint256 _x1, uint256 _y1, uint256 _x2, uint256 _y2) public auth returns (uint256) {
+        uint256 _x1, uint256 _y1, uint256 _width) public auth returns (uint256) {
 
         // TODO: Iterate the locations and insert to the new create BlockStreet.
         // TODO: Validate there is no conflict: each land can only appear in one Street Block.
@@ -57,7 +75,7 @@ contract StreetBlockBase is PausableDSAuth, BuildingSettingIds {
 
         // landsInStreetBlock[tokenId] = uint256[]();
 
-        emit Created(_owner, tokenId, _x1, _y1, _x2, _y2, now);
+        //emit Created(_owner, tokenId, _x1, _y1, _width, now);
 
         return tokenId;
     }

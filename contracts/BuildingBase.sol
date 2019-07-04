@@ -10,18 +10,12 @@ import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLooku
 contract BuildingBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
-        address indexed owner, uint256 buildingMapTokenId, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, uint256 createTime
+        address indexed owner, uint256 buildingMapTokenId, uint256 createTime
     );
 
     struct Building {
         uint256 buildingMapId;
         uint256 streetBlockId;
-
-        uint256 gold;
-        uint256 wood;
-        uint256 water;
-        uint256 fire;
-        uint256 sioo;
     }
 
     /*
@@ -52,20 +46,22 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
         registry = ISettingsRegistry(_registry);
     }
 
+    function createBuildingFromLand(uint256 _buildingMapId, uint256 _landTokenId)  public auth returns (uint256) {
+        uint256 streetBlockId = createBuildingBlock(_landTokenId);
+
+        uint256 tokenId = createBuilding(_buildingMapId, streetBlockId);
+        return tokenId;
+    }
+
     function createBuilding(
-        uint256 _buildingMapId, uint256 _streetBlockId, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo) public auth returns (uint256) {
+        uint256 _buildingMapId, uint256 _streetBlockId) public auth returns (uint256) {
 
         // TODO: validate msg.sender
         // TODO: Charge resources.
 
         Building memory building = Building({
             buildingMapId : _buildingMapId,
-            streetBlockId : _streetBlockId,
-            gold : _gold,
-            wood : _wood,
-            water : _water,
-            fire : _fire,
-            sioo : _sioo
+            streetBlockId : _streetBlockId
         });
 
         lastBuildingObjectId += 1;
@@ -74,10 +70,12 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
 
         tokenId2Building[tokenId] = building;
 
-        emit Created(_owner, tokenId, _buildingMapId, _streetBlockId, _gold, _wood, _water, _fire, _sioo, now);
+        emit Created(_owner, tokenId, _buildingMapId, _streetBlockId, now);
 
         return tokenId;
     }
+
+    // TODO upgradebuilding
 
 }
 

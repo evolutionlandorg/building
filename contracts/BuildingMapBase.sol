@@ -10,12 +10,18 @@ import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLooku
 contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
-        address indexed owner, uint256 buildingMapTokenId, uint256 type, uint256 level, uint256 createTime
+        address indexed owner, uint256 buildingMapTokenId, uint256 type, uint256 level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, uint256 createTime
     );
 
     struct BuildingMap {
         uint256 type;
         uint256 level;
+
+        uint256 gold;
+        uint256 wood;
+        uint256 water;
+        uint256 fire;
+        uint256 sioo;
     }
 
     /*
@@ -48,10 +54,15 @@ contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
     }
 
     function createBuildingMap(
-        uint256 _type, uint256 _level, address _owner) public auth returns (uint256) {
+        uint256 _type, uint256 _level, uint256 _gold, uint256 _wood, uint256 _water, uint256 _fire, uint256 _sioo, address _owner) public auth returns (uint256) {
         BuildingMap memory buildingMap = BuildingMap({
             type : _type,
-            level : _level
+            level : _level,
+            gold : _gold,
+            wood : _wood,
+            water : _water,
+            fire : _fire,
+            sioo : _sioo
         });
 
         lastBuildingMapObjectId += 1;
@@ -60,7 +71,7 @@ contract BuildingMapBase is PausableDSAuth, BuildingSettingIds {
 
         tokenId2BuildingMap[tokenId] = buildingMap;
 
-        emit Created(_owner, tokenId, _type, _level, now);
+        emit Created(_owner, tokenId, _type, _level, _gold, _wood, _water, _fire, _sioo, now);
 
         return tokenId;
     }
