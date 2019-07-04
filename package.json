@@ -1,0 +1,22 @@
+{
+  "name": "@evolutionland/building",
+  "version": "1.0.0",
+  "description": "Evolution Land building contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evolutionlandorg/building.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evolutionlandorg/building/issues"
+  },
+  "homepage": "https://github.com/evolutionlandorg/building#readme",
+  "dependencies": {
+    "@evolutionland/common": "^1.7.9"
+  }
+}
