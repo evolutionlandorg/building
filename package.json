@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/evolutionlandorg/building#readme",
   "dependencies": {
-    "@evolutionland/common": "^1.7.9"
+    "@evolutionland/common": "^1.7.9",
+    "@evolutionland/land": "^1.4.1"
   }
 }

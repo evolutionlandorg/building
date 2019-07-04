@@ -7,12 +7,12 @@ import "@evolutionland/common/contracts/interfaces/IObjectOwnership.sol";
 import "@evolutionland/common/contracts/PausableDSAuth.sol";
 import "openzeppelin-solidity/contracts/introspection/SupportsInterfaceWithLookup.sol";
 import "./BuildingSettingIds.sol";
-import "./BuildingSettingIds.sol";
+import "./interfaces/IStreetBlockBase.sol";
 
 contract BuildingBase is PausableDSAuth, BuildingSettingIds {
 
     event Created(
-        address indexed owner, uint256 buildingMapTokenId, uint256 createTime
+        address indexed owner, uint256 tokenId, uint256 _buildingMapId, uint256 _streetBlockId, uint256 createTime
     );
 
     struct Building {
@@ -49,7 +49,7 @@ contract BuildingBase is PausableDSAuth, BuildingSettingIds {
     }
 
     function createBuildingFromLand(uint256 _buildingMapId, uint256 _landTokenId)  public auth returns (uint256) {
-        uint256 streetBlockId = IObjectOwnership(registry.addressOf(CONTRACT_STREET_BLOCK_BASE)).createStreetBlock(_landTokenId);
+        uint256 streetBlockId = IStreetBlockBase(registry.addressOf(CONTRACT_STREET_BLOCK_BASE)).createStreetBlockFromLand(_landTokenId);
 
         uint256 tokenId = createBuilding(_buildingMapId, streetBlockId);
         return tokenId;
